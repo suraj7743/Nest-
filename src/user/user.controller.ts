@@ -2,6 +2,8 @@ import { Controller, Get, UseGuards, Req, Post } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { AuthService } from 'src/auth/auth.service';
+import { CONSTANTS } from './role.constant';
+import { RoleGuard } from './role.guard';
 
 @Controller('user')
 export class UserController {
@@ -13,9 +15,21 @@ export class UserController {
       token: await this.authservice.generateToken(req.user),
     };
   }
+  //to check whether jwt token is send for not
   @UseGuards(AuthGuard('jwt'))
   @Get()
-  protectedRoute(): string {
-    return 'This is jwt protected route';
+  protectedRoute(@Req() req: Request): any {
+    return 'This is jwt protected route  ';
+  }
+  //authorization according to role
+  @UseGuards(AuthGuard('jwt'), new RoleGuard(CONSTANTS.Role.ADMIN))
+  @Get('/admin')
+  AdminRoute(): string {
+    return 'this is Admin Route';
+  }
+  @UseGuards(AuthGuard('jwt'), new RoleGuard(CONSTANTS.Role.LOCAL))
+  @Get('/local')
+  LocalRoute(): string {
+    return 'THis is local route';
   }
 }
