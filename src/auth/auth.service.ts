@@ -1,24 +1,20 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  BadRequestException,
-} from '@nestjs/common';
-
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { user } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
+
 @Injectable()
-export class authservice {
-  constructor(private userservice: UserService) {}
-  validateUser(username: string, password: string) {
-    const user = this.userservice.finduser(username);
-    if (user === undefined) {
-      throw new UnauthorizedException("User doesn't found ");
+export class AuthService {
+  constructor(private readonly userservice: UserService) {}
+  //in auth service we need to match for the password of the user
+  async validateUser(username: string, password: string): Promise<user | null> {
+    const user = await this.userservice.findUser(username);
+    if (user == undefined || user == null) {
+      throw new UnauthorizedException('Cannot find the username credentials');
     }
     if (user.password != password) {
-      throw new UnauthorizedException("Password doesn't matched");
+      throw new UnauthorizedException("Password doesn't Match ");
     }
-    if (user && user.password === password) {
-      return user;
-    }
-    return null;
+
+    return user;
   }
 }

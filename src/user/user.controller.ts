@@ -1,16 +1,13 @@
-import { Body, Controller, Get, ValidationPipe } from '@nestjs/common';
-import { Post, Request, UseGuards } from '@nestjs/common/decorators';
-import { UserService } from './user.service';
+import { Controller, Get, UseGuards, Req, Post } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { UserDto } from './user.dto';
+import { Request } from 'express';
 
 @Controller('user')
 export class UserController {
-  constructor(public userService: UserService) {}
-  //get request on ("/user")
-  @UseGuards(AuthGuard('local'))
-  @Get()
-  login(): string {
-    return 'login route';
+  @UseGuards(AuthGuard('local')) //use local strategy to make guard
+  @Post()
+  loginUser(@Req() req: Request): string {
+    console.log(req.user);
+    return 'this is the authenticated site';
   }
 }
