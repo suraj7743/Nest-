@@ -2,8 +2,7 @@
 /dist
 /node_modules
 #env
-.local.env
-.prod.env
+/*.env
 
 # Logs
 logs
